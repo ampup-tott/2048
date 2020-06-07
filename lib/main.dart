@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'package:app2048/screens/board.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
-import 'package:app2048/screens/game.dart';
 import 'package:app2048/screens/home.dart';
 
 void main() {
@@ -10,8 +10,10 @@ void main() {
 }
 
 var routes = <String, WidgetBuilder>{
-  "/": (BuildContext context) => HomeScreen(),
-  "/game": (BuildContext context) => Scaffold(body: GameScreen())
+  "/": (BuildContext context) => Scaffold(
+        body: HomeScreen(),
+      ),
+  "/game": (BuildContext context) => BoardWidget()
 };
 
 class App extends StatefulWidget {
@@ -36,10 +38,10 @@ class _AppState extends State<App> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'FiraCode',
-        scaffoldBackgroundColor: Colors.grey[200],
+        fontFamily: 'Fira Code',
+        scaffoldBackgroundColor: Colors.grey[200]
       ),
-      initialRoute: '/',
+      initialRoute: '/game',
       routes: routes,
     );
   }
