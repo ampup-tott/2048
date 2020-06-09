@@ -5,29 +5,45 @@ class Board {
   final int row;
   final int column;
   int score;
+  bool canBack;
 
   Board(this.row, this.column);
 
   List<List<Tile>> _boardTiles;
+  List<List<Tile>> _boardTilesPrev;
 
   void initBoard() {
     _boardTiles = List.generate(
-      4,
+      row,
       (r) => List.generate(
-        4,
+        column,
         (c) => Tile(
           row: r,
           column: c,
           value: 0,
           isNew: false,
           canMerge: false,
+          isMerged: false
         ),
       ),
     );
 
-    print(_boardTiles);
+    _boardTilesPrev = List.generate(
+      row,
+      (r) => List.generate(
+        column,
+        (c) => Tile(
+          row: r,
+          column: c,
+          value: 0,
+          isNew: false,
+          canMerge: false
+        ),
+      ),
+    );
 
     score = 0;
+    canBack = false;
     resetCanMerge();
     randomEmptyTile();
     randomEmptyTile();
@@ -38,11 +54,14 @@ class Board {
       return;
     }
 
+    backupboardTiles();
+
     for (int r = 0; r < row; ++r) {
       for (int c = 0; c < column; ++c) {
         mergeLeft(r, c);
       }
     }
+    
     randomEmptyTile();
     resetCanMerge();
   }
@@ -52,11 +71,14 @@ class Board {
       return;
     }
 
+    backupboardTiles();
+
     for (int r = 0; r < row; ++r) {
       for (int c = column - 2; c >= 0; --c) {
         mergeRight(r, c);
       }
     }
+
     randomEmptyTile();
     resetCanMerge();
   }
@@ -65,6 +87,8 @@ class Board {
     if (!canMoveUp()) {
       return;
     }
+
+    backupboardTiles();
 
     for (int r = 0; r < row; ++r) {
       for (int c = 0; c < column; ++c) {
@@ -79,6 +103,8 @@ class Board {
     if (!canMoveDown()) {
       return;
     }
+
+    backupboardTiles();
 
     for (int r = row - 2; r >= 0; --r) {
       for (int c = 0; c < column; ++c) {
@@ -182,13 +208,18 @@ class Board {
       a.value = 0;
       score += b.value;
       b.canMerge = true;
+      b.isMerged = true;
     } else {
       b.canMerge = true;
     }
   }
 
   bool gameOver() {
-    return !canMoveLeft() && !canMoveRight() && !canMoveUp() && !canMoveDown();
+    bool gameOver = !canMoveLeft() && !canMoveRight() && !canMoveUp() && !canMoveDown();
+    if (gameOver) {
+      canBack = false;
+    }
+    return gameOver;
   }
 
   Tile getTile(int row, int column) {
@@ -220,5 +251,37 @@ class Board {
         tile.canMerge = false;
       });
     });
+  }
+
+  void backupboardTiles() {
+    print('backup');
+    for (int r = 0; r < row; ++r) {
+      for (int c = 0; c < column; ++c) {
+        _boardTilesPrev[r][c].canMerge = _boardTiles[r][c].canMerge;
+        _boardTilesPrev[r][c].isNew = _boardTiles[r][c].isNew;
+        _boardTilesPrev[r][c].value = _boardTiles[r][c].value;
+        _boardTilesPrev[r][c].row = _boardTiles[r][c].row;
+        _boardTilesPrev[r][c].column = _boardTiles[r][c].column;
+      }
+    }
+    canBack = true;
+    return;
+  }
+
+  void back() {
+    if (!canBack) {
+      return;
+    }
+     print('back');
+    for (int r = 0; r < row; ++r) {
+      for (int c = 0; c < column; ++c) {
+        _boardTiles[r][c].canMerge = _boardTilesPrev[r][c].canMerge;
+        _boardTiles[r][c].isNew = _boardTilesPrev[r][c].isNew;
+        _boardTiles[r][c].value = _boardTilesPrev[r][c].value;
+        _boardTiles[r][c].row = _boardTilesPrev[r][c].row;
+        _boardTiles[r][c].column = _boardTilesPrev[r][c].column;
+      }
+    }
+    canBack = false;
   }
 }

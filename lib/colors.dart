@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 final Map<int, int> tileColors = <int, int>{
   2: 0xFFEEE4DA,
   4: 0xFFEDE0C8,
@@ -15,5 +13,6 @@ final Map<int, int> tileColors = <int, int>{
 };
 
 final int fontColorTwoFour = 0xFF776E65;
+final int fontColorOther = 0xFFDDDDDD;
 final int gridBackground = 0xFFBBADA0;
 final int emptyGridBackground = 0xFFCDC1B4;

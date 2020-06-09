@@ -1,3 +1,4 @@
+import 'package:app2048/contants.dart';
 import 'package:flutter/material.dart';
 import 'package:app2048/models/tile.dart';
 import 'package:app2048/screens/board.dart';
@@ -37,9 +38,11 @@ class AnimatedTileWidget extends AnimatedWidget {
           : Color(emptyGridBackground),
       text: Text('${tile.value > 0 ? tile.value : ""}',
           style: TextStyle(
-              fontSize: 40,
+              fontSize: getFontSize(tile.value),
               fontWeight: FontWeight.bold,
-              color: Color(fontColorTwoFour))),
+              color: tile.value > 4
+                  ? Color(fontColorOther)
+                  : Color(fontColorTwoFour))),
     );
   }
 }
@@ -70,7 +73,7 @@ class TileBox extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            borderRadius: BorderRadius.all(Radius.circular(8.0))),
         child: Center(
           child: text,
         ),

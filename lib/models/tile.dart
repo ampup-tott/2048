@@ -3,6 +3,7 @@ class Tile {
   int value;
   bool canMerge;
   bool isNew;
+  bool isMerged;
 
   Tile({
     this.row,
@@ -10,6 +11,7 @@ class Tile {
     this.value = 0,
     this.canMerge,
     this.isNew,
+    this.isMerged
   });
 
   bool isEmpty() {

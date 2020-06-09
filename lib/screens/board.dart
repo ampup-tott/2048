@@ -4,6 +4,8 @@ import 'package:app2048/widgets/game.dart';
 import 'package:app2048/models/board.dart';
 import 'package:app2048/widgets/tile.dart';
 import 'package:app2048/colors.dart';
+import 'package:app2048/widgets/score.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BoardWidget extends StatefulWidget {
   @override
@@ -18,6 +20,19 @@ class BoardWidgetState extends State<BoardWidget> {
   bool gameOver;
   double tilePadding = 5.0;
   MediaQueryData _queryData;
+  SharedPreferences sharedPreferences;
+  int score;
+
+  addToSF(String key, int value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt(key, value);
+  }
+
+  void setToKey(String key) async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    int _score = sharedPreferences.getInt(key);
+    score = _score != null ? _score : 0;
+  }
 
   @override
   void initState() {
@@ -61,10 +76,10 @@ class BoardWidgetState extends State<BoardWidget> {
         _tileWidgets.add(TileWidget(tile: _board.getTile(r, c), state: this));
       }
     }
-    List<Widget> children = List<Widget>();
+    List<Widget> boardWidget = List<Widget>();
 
-    children.add(GameWidget(state: this));
-    children.addAll(_tileWidgets);
+    boardWidget.add(GameWidget(state: this));
+    boardWidget.addAll(_tileWidgets);
 
     return Scaffold(
         body: GestureDetector(
@@ -123,50 +138,19 @@ class BoardWidgetState extends State<BoardWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    ScoreWidget(
+                        title: 'Score', score: _board.score, width: 100),
+                    ScoreWidget(
+                        title: 'High Score', score: _board.score, width: 120),
                     Padding(
                       padding: EdgeInsets.only(top: 100),
                       child: Container(
-                        width: 100.0,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          color: Color(gridBackground),
-                        ),
-                        height: 80.0,
-                        child: Column(
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.only(top: 10.0, bottom: 2.0),
-                              child: Text(
-                                'Score',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(bottom: 10.0),
-                              child: Text(
-                                '${_board.score}',
-                                style: TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 100),
-                      child: Container(
-                          width: 100.0,
+                          width: 70.0,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             color: Color(gridBackground),
                           ),
-                          height: 80.0,
+                          height: 70.0,
                           child: Center(
                             child: Padding(
                               padding: EdgeInsets.all(5.0),
@@ -178,6 +162,34 @@ class BoardWidgetState extends State<BoardWidget> {
                                 ),
                                 onPressed: () {
                                   newGame();
+                                },
+                              ),
+                            ),
+                          )),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 100),
+                      child: Container(
+                          width: 70.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Color(gridBackground),
+                          ),
+                          height: 70.0,
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(5.0),
+                              child: IconButton(
+                                iconSize: 50.0,
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white70,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _board.back();
+                                    gameover();
+                                  });
                                 },
                               ),
                             ),
@@ -200,7 +212,7 @@ class BoardWidgetState extends State<BoardWidget> {
                   child: Padding(
                     padding: EdgeInsets.all(20),
                     child: Stack(
-                      children: children,
+                      children: boardWidget,
                     ),
                   ))
             ],

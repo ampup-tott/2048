@@ -22,9 +22,7 @@ class _TileWidgetState extends State<TileWidget>
   void initState() {
     super.initState();
     controller = AnimationController(
-      duration: Duration(
-        milliseconds: 200,
-      ),
+      duration: Duration(milliseconds: 200),
       vsync: this,
     );
 
@@ -40,11 +38,16 @@ class _TileWidgetState extends State<TileWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.tile.isNew && !widget.tile.isEmpty()) {
+    if (widget.tile.isMerged) {
+      controller.reset();
+      controller.forward();
+      widget.tile.isMerged = false;
+    } else if (widget.tile.isNew && !widget.tile.isEmpty()) {
       controller.reset();
       controller.forward();
       widget.tile.isNew = false;
     } else {
+      controller.forward();
       controller.animateTo(1.0);
     }
 
