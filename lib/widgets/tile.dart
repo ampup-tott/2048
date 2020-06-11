@@ -8,7 +8,8 @@ class TileWidget extends StatefulWidget {
   final Tile tile;
   final BoardWidgetState state;
 
-  const TileWidget({Key key, this.tile, this.state}) : super(key: key);
+  const TileWidget({Key key, this.tile, this.state})
+      : super(key: key);
   @override
   _TileWidgetState createState() => _TileWidgetState();
 }
@@ -17,6 +18,7 @@ class _TileWidgetState extends State<TileWidget>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animation;
+  Animation<Offset> offsetAnimation;
 
   @override
   void initState() {
@@ -26,7 +28,18 @@ class _TileWidgetState extends State<TileWidget>
       vsync: this,
     );
 
-    animation = Tween(begin: 0.0, end: 1.0).animate(controller);
+    offsetAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(1.5, 0.0),
+    ).animate(CurvedAnimation(
+      parent: controller,
+      curve: Curves.elasticIn,
+    ));
+
+    animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.ease,
+    );
   }
 
   @override
@@ -38,7 +51,10 @@ class _TileWidgetState extends State<TileWidget>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.tile.isMerged) {
+    if (widget.tile.oldValue > 0) {
+      controller.fling(velocity: 0.3);
+      widget.tile.oldValue = 0;
+    } else if (widget.tile.isMerged) {
       controller.reset();
       controller.forward();
       widget.tile.isMerged = false;
@@ -51,10 +67,18 @@ class _TileWidgetState extends State<TileWidget>
       controller.animateTo(1.0);
     }
 
-    return AnimatedTileWidget(
-      tile: widget.tile,
-      state: widget.state,
-      animation: animation,
+    // return AnimatedTileWidget(
+    //   tile: widget.tile,
+    //   state: widget.state,
+    //   animation: animation,
+    // );
+
+    return SlideTransition(
+      position: offsetAnimation,
+      child: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: FlutterLogo(size: 150.0),
+      ),
     );
   }
 }

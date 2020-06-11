@@ -22,10 +22,11 @@ class AnimatedTileWidget extends AnimatedWidget {
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
     double animationValue = animation.value;
+
     Size boardSize = state.boardSize();
     double width = (boardSize.width - (state.column + 1) * state.tilePadding) /
         state.column;
-
+        
     return TileBox(
       left: (tile.column * width + state.tilePadding * (tile.column + 1)) +
           width / 2 * (1 - animationValue),
@@ -72,12 +73,11 @@ class TileBox extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.all(Radius.circular(8.0))),
+            color: color, borderRadius: BorderRadius.all(Radius.circular(8.0))),
         child: Center(
           child: text,
         ),
-      ),
+      )
     );
   }
 }

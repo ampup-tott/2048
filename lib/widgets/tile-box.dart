@@ -31,6 +31,7 @@ class TileBox extends StatelessWidget {
           child: text,
         ),
       ),
+      bottom: 100
     );
   }
 }

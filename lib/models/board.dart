@@ -23,7 +23,8 @@ class Board {
           value: 0,
           isNew: false,
           canMerge: false,
-          isMerged: false
+          isMerged: false,
+          oldValue: 0
         ),
       ),
     );
@@ -37,7 +38,9 @@ class Board {
           column: c,
           value: 0,
           isNew: false,
-          canMerge: false
+          canMerge: false,
+          isMerged: false,
+          oldValue: 0
         ),
       ),
     );
@@ -202,9 +205,11 @@ class Board {
 
     if (b.isEmpty()) {
       b.value = a.value;
+      a.oldValue = a.value;
       a.value = 0;
     } else if (a == b) {
       b.value = b.value * 2;
+      a.oldValue = a.value;
       a.value = 0;
       score += b.value;
       b.canMerge = true;
